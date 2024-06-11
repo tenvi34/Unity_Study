@@ -111,27 +111,36 @@ namespace UnityChan
             currTipPos = currTipPos - prevTipPos + currTipPos + force * sqrDt;
 
             //長さを元に戻す
-            currTipPos = (currTipPos - trs.position).normalized * springLength + trs.position;
+            currTipPos = (currTipPos - trs.position).normalized * springLength +
+                         trs.position;
 
             //衝突判定
             for (var i = 0; i < colliders.Length; i++)
-                if (Vector3.Distance(currTipPos, colliders[i].transform.position) <= radius + colliders[i].radius)
+                if (Vector3.Distance(currTipPos,
+                        colliders[i].transform.position) <=
+                    radius + colliders[i].radius)
                 {
-                    var normal = (currTipPos - colliders[i].transform.position).normalized;
-                    currTipPos = colliders[i].transform.position + normal * (radius + colliders[i].radius);
-                    currTipPos = (currTipPos - trs.position).normalized * springLength + trs.position;
+                    var normal = (currTipPos - colliders[i].transform.position)
+                        .normalized;
+                    currTipPos = colliders[i].transform.position +
+                                 normal * (radius + colliders[i].radius);
+                    currTipPos =
+                        (currTipPos - trs.position).normalized * springLength +
+                        trs.position;
                 }
 
             prevTipPos = temp;
 
             //回転を適用；
             var aimVector = trs.TransformDirection(boneAxis);
-            var aimRotation = Quaternion.FromToRotation(aimVector, currTipPos - trs.position);
+            var aimRotation =
+                Quaternion.FromToRotation(aimVector, currTipPos - trs.position);
             //original
             //trs.rotation = aimRotation * trs.rotation;
             //Kobayahsi:Lerp with mixWeight
             var secondaryRotation = aimRotation * trs.rotation;
-            trs.rotation = Quaternion.Lerp(org.rotation, secondaryRotation, managerRef.dynamicRatio);
+            trs.rotation = Quaternion.Lerp(org.rotation, secondaryRotation,
+                managerRef.dynamicRatio);
         }
     }
 }

@@ -53,10 +53,18 @@ namespace UnityChan
         {
             if (showInstWindow)
             {
-                GUI.Box(new Rect(Screen.width - 210, Screen.height - 100, 200, 90), "Camera Operations");
-                GUI.Label(new Rect(Screen.width - 200, Screen.height - 80, 200, 30), "RMB / Alt+LMB: Tumble");
-                GUI.Label(new Rect(Screen.width - 200, Screen.height - 60, 200, 30), "MMB / Alt+Cmd+LMB: Track");
-                GUI.Label(new Rect(Screen.width - 200, Screen.height - 40, 200, 30), "Wheel / 2 Fingers Swipe: Dolly");
+                GUI.Box(
+                    new Rect(Screen.width - 210, Screen.height - 100, 200, 90),
+                    "Camera Operations");
+                GUI.Label(
+                    new Rect(Screen.width - 200, Screen.height - 80, 200, 30),
+                    "RMB / Alt+LMB: Tumble");
+                GUI.Label(
+                    new Rect(Screen.width - 200, Screen.height - 60, 200, 30),
+                    "MMB / Alt+Cmd+LMB: Track");
+                GUI.Label(
+                    new Rect(Screen.width - 200, Screen.height - 40, 200, 30),
+                    "Wheel / 2 Fingers Swipe: Dolly");
             }
         }
 
@@ -88,7 +96,8 @@ namespace UnityChan
             if (Input.GetMouseButton((int)MouseButtonDown.MBD_LEFT))
             {
                 //Operation for Mac : "Left Alt + Left Command + LMB Drag" is Track
-                if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftCommand))
+                if (Input.GetKey(KeyCode.LeftAlt) &&
+                    Input.GetKey(KeyCode.LeftCommand))
                 {
                     if (diff.magnitude > Vector3.kEpsilon)
                         cameraTranslate(-diff / 100.0f);
@@ -146,7 +155,8 @@ namespace UnityChan
             var q = Quaternion.identity;
 
             var focusTrans = focusObj.transform;
-            focusTrans.localEulerAngles = focusTrans.localEulerAngles + eulerAngle;
+            focusTrans.localEulerAngles =
+                focusTrans.localEulerAngles + eulerAngle;
 
             //Change this.transform.LookAt(this.focus) to q.SetLookRotation(this.focus)
             q.SetLookRotation(focus);

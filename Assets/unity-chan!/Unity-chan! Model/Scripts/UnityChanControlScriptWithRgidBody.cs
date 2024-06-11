@@ -15,13 +15,22 @@ namespace UnityChan
     public class UnityChanControlScriptWithRgidBody : MonoBehaviour
     {
         // アニメーター各ステートへの参照
-        private static readonly int idleState = Animator.StringToHash("Base Layer.Idle");
-        private static readonly int locoState = Animator.StringToHash("Base Layer.Locomotion");
-        private static readonly int jumpState = Animator.StringToHash("Base Layer.Jump");
-        private static readonly int restState = Animator.StringToHash("Base Layer.Rest");
+        private static readonly int idleState =
+            Animator.StringToHash("Base Layer.Idle");
+
+        private static readonly int locoState =
+            Animator.StringToHash("Base Layer.Locomotion");
+
+        private static readonly int jumpState =
+            Animator.StringToHash("Base Layer.Jump");
+
+        private static readonly int restState =
+            Animator.StringToHash("Base Layer.Rest");
 
         public float animSpeed = 1.5f; // アニメーション再生速度設定
-        public float lookSmoother = 3.0f; // a smoothing setting for camera motion
+
+        public float
+            lookSmoother = 3.0f; // a smoothing setting for camera motion
 
         public bool useCurves = true; // Mecanimでカーブ調整を使うか設定する
 
@@ -47,7 +56,8 @@ namespace UnityChan
         // キャラクターコントローラ（カプセルコライダ）の参照
         private CapsuleCollider col;
 
-        private AnimatorStateInfo currentBaseState; // base layerで使われる、アニメーターの現在の状態の参照
+        private AnimatorStateInfo
+            currentBaseState; // base layerで使われる、アニメーターの現在の状態の参照
 
         // CapsuleColliderで設定されているコライダのHeiht、Centerの初期値を収める変数
         private float orgColHight;
@@ -80,9 +90,12 @@ namespace UnityChan
             var h = Input.GetAxis("Horizontal"); // 入力デバイスの水平軸をhで定義
             var v = Input.GetAxis("Vertical"); // 入力デバイスの垂直軸をvで定義
             anim.SetFloat("Speed", v); // Animator側で設定している"Speed"パラメタにvを渡す
-            anim.SetFloat("Direction", h); // Animator側で設定している"Direction"パラメタにhを渡す
+            anim.SetFloat("Direction",
+                h); // Animator側で設定している"Direction"パラメタにhを渡す
             anim.speed = animSpeed; // Animatorのモーション再生速度に animSpeedを設定する
-            currentBaseState = anim.GetCurrentAnimatorStateInfo(0); // 参照用のステート変数にBase Layer (0)の現在のステートを設定する
+            currentBaseState =
+                anim.GetCurrentAnimatorStateInfo(
+                    0); // 参照用のステート変数にBase Layer (0)の現在のステートを設定する
             rb.useGravity = true; //ジャンプ中に重力を切るので、それ以外は重力の影響を受けるようにする
 
 
@@ -101,7 +114,8 @@ namespace UnityChan
                     //ステート遷移中でなかったらジャンプできる
                     if (!anim.IsInTransition(0))
                     {
-                        rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
+                        rb.AddForce(Vector3.up * jumpPower,
+                            ForceMode.VelocityChange);
                         anim.SetBool("Jump", true); // Animatorにジャンプに切り替えるフラグを送る
                     }
 
@@ -125,7 +139,8 @@ namespace UnityChan
             // 現在のベースレイヤーがjumpStateの時
             else if (currentBaseState.nameHash == jumpState)
             {
-                cameraObject.SendMessage("setCameraPositionJumpView"); // ジャンプ中のカメラに変更
+                cameraObject.SendMessage(
+                    "setCameraPositionJumpView"); // ジャンプ中のカメラに変更
                 // ステートがトランジション中でない場合
                 if (!anim.IsInTransition(0))
                 {
@@ -141,16 +156,21 @@ namespace UnityChan
                             rb.useGravity = false; //ジャンプ中の重力の影響を切る
 
                         // レイキャストをキャラクターのセンターから落とす
-                        var ray = new Ray(transform.position + Vector3.up, -Vector3.up);
+                        var ray = new Ray(transform.position + Vector3.up,
+                            -Vector3.up);
                         var hitInfo = new RaycastHit();
                         // 高さが useCurvesHeight 以上ある時のみ、コライダーの高さと中心をJUMP00アニメーションについているカーブで調整する
                         if (Physics.Raycast(ray, out hitInfo))
                         {
                             if (hitInfo.distance > useCurvesHeight)
                             {
-                                col.height = orgColHight - jumpHeight; // 調整されたコライダーの高さ
-                                var adjCenterY = orgVectColCenter.y + jumpHeight;
-                                col.center = new Vector3(0, adjCenterY, 0); // 調整されたコライダーのセンター
+                                col.height =
+                                    orgColHight - jumpHeight; // 調整されたコライダーの高さ
+                                var adjCenterY =
+                                    orgVectColCenter.y + jumpHeight;
+                                col.center =
+                                    new Vector3(0, adjCenterY,
+                                        0); // 調整されたコライダーのセンター
                             }
                             else
                             {
@@ -186,12 +206,18 @@ namespace UnityChan
         private void OnGUI()
         {
             GUI.Box(new Rect(Screen.width - 260, 10, 250, 150), "Interaction");
-            GUI.Label(new Rect(Screen.width - 245, 30, 250, 30), "Up/Down Arrow : Go Forwald/Go Back");
-            GUI.Label(new Rect(Screen.width - 245, 50, 250, 30), "Left/Right Arrow : Turn Left/Turn Right");
-            GUI.Label(new Rect(Screen.width - 245, 70, 250, 30), "Hit Space key while Running : Jump");
-            GUI.Label(new Rect(Screen.width - 245, 90, 250, 30), "Hit Spase key while Stopping : Rest");
-            GUI.Label(new Rect(Screen.width - 245, 110, 250, 30), "Left Control : Front Camera");
-            GUI.Label(new Rect(Screen.width - 245, 130, 250, 30), "Alt : LookAt Camera");
+            GUI.Label(new Rect(Screen.width - 245, 30, 250, 30),
+                "Up/Down Arrow : Go Forwald/Go Back");
+            GUI.Label(new Rect(Screen.width - 245, 50, 250, 30),
+                "Left/Right Arrow : Turn Left/Turn Right");
+            GUI.Label(new Rect(Screen.width - 245, 70, 250, 30),
+                "Hit Space key while Running : Jump");
+            GUI.Label(new Rect(Screen.width - 245, 90, 250, 30),
+                "Hit Spase key while Stopping : Rest");
+            GUI.Label(new Rect(Screen.width - 245, 110, 250, 30),
+                "Left Control : Front Camera");
+            GUI.Label(new Rect(Screen.width - 245, 130, 250, 30),
+                "Alt : LookAt Camera");
         }
 
 

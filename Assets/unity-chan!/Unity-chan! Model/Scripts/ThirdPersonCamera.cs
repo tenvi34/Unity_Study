@@ -16,7 +16,9 @@ namespace UnityChan
         private bool bQuickSwitch; //Change Camera Position Quickly
         private Transform frontPos; // Front Camera locater
         private Transform jumpPos; // Jump Camera locater
-        private Transform standardPos; // the usual position for the camera, specified by a transform in the game
+
+        private Transform
+            standardPos; // the usual position for the camera, specified by a transform in the game
 
 
         private void Start()
@@ -54,8 +56,10 @@ namespace UnityChan
             {
                 // the camera to standard position and direction
                 transform.position =
-                    Vector3.Lerp(transform.position, standardPos.position, Time.fixedDeltaTime * smooth);
-                transform.forward = Vector3.Lerp(transform.forward, standardPos.forward, Time.fixedDeltaTime * smooth);
+                    Vector3.Lerp(transform.position, standardPos.position,
+                        Time.fixedDeltaTime * smooth);
+                transform.forward = Vector3.Lerp(transform.forward,
+                    standardPos.forward, Time.fixedDeltaTime * smooth);
             }
             else
             {
@@ -78,8 +82,10 @@ namespace UnityChan
         {
             // Change Jump Camera
             bQuickSwitch = false;
-            transform.position = Vector3.Lerp(transform.position, jumpPos.position, Time.fixedDeltaTime * smooth);
-            transform.forward = Vector3.Lerp(transform.forward, jumpPos.forward, Time.fixedDeltaTime * smooth);
+            transform.position = Vector3.Lerp(transform.position,
+                jumpPos.position, Time.fixedDeltaTime * smooth);
+            transform.forward = Vector3.Lerp(transform.forward, jumpPos.forward,
+                Time.fixedDeltaTime * smooth);
         }
     }
 }

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,26 +9,26 @@ public class HpBarWorld : MonoBehaviour
     public MyCharacterController _characterControllerScript;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         UpdateHpBarStatus();
     }
 
-    void UpdateHpBarStatus()
+    private void UpdateHpBarStatus()
     {
-        float currentHp = _characterControllerScript.CurrentHp;
-        float maxHp = _characterControllerScript.MaxHp;
-        float lerpSpeed = 5f;
+        var currentHp = _characterControllerScript.CurrentHp;
+        var maxHp = _characterControllerScript.MaxHp;
+        var lerpSpeed = 5f;
 
-        float fillAmount = currentHp / maxHp;
-        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount, Time.deltaTime * lerpSpeed);
-        
+        var fillAmount = currentHp / maxHp;
+        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount,
+            Time.deltaTime * lerpSpeed);
+
         // 체력 텍스트 표시
         //_hpStringState.text = string.Format("{0} / {1}", currentHp, maxHp);
 

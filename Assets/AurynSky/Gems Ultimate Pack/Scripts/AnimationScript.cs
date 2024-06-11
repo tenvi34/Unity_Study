@@ -34,7 +34,9 @@ public class AnimationScript : MonoBehaviour
     {
         if (isAnimated)
         {
-            if (isRotating) transform.Rotate(rotationAngle * rotationSpeed * Time.deltaTime);
+            if (isRotating)
+                transform.Rotate(rotationAngle * rotationSpeed *
+                                 Time.deltaTime);
 
             if (isFloating)
             {
@@ -62,9 +64,11 @@ public class AnimationScript : MonoBehaviour
                 scaleTimer += Time.deltaTime;
 
                 if (scalingUp)
-                    transform.localScale = Vector3.Lerp(transform.localScale, endScale, scaleSpeed * Time.deltaTime);
+                    transform.localScale = Vector3.Lerp(transform.localScale,
+                        endScale, scaleSpeed * Time.deltaTime);
                 else if (!scalingUp)
-                    transform.localScale = Vector3.Lerp(transform.localScale, startScale, scaleSpeed * Time.deltaTime);
+                    transform.localScale = Vector3.Lerp(transform.localScale,
+                        startScale, scaleSpeed * Time.deltaTime);
 
                 if (scaleTimer >= scaleRate)
                 {

@@ -26,9 +26,12 @@ namespace UnityChan
         private void Update()
         {
             var force = Vector3.zero;
-            if (isWindActive) force = new Vector3(Mathf.PerlinNoise(Time.time, 0.0f) * 0.005f, 0, 0);
+            if (isWindActive)
+                force = new Vector3(Mathf.PerlinNoise(Time.time, 0.0f) * 0.005f,
+                    0, 0);
 
-            for (var i = 0; i < springBones.Length; i++) springBones[i].springForce = force;
+            for (var i = 0; i < springBones.Length; i++)
+                springBones[i].springForce = force;
         }
 
         private void OnGUI()

@@ -1,17 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class JumpButton : MonoBehaviour
 {
+    public MyCharacterController characterComp;
+
     //public GameObject character;
     private Button _jumpButton;
 
-    public MyCharacterController characterComp;
-    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _jumpButton = GetComponent<Button>();
         _jumpButton.onClick.AddListener(Jump);
@@ -19,12 +17,11 @@ public class JumpButton : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
     }
 
-    void Jump()
+    private void Jump()
     {
         // if (character != null)
         // {

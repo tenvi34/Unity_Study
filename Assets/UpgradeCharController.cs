@@ -8,15 +8,15 @@ public class UpgradeCharController : MonoBehaviour
     public float RotSpeed = 180.0f;
     public float JumpPower = 5;
 
-    private Vector3 MoveDirection = Vector3.zero;
-    private Vector3 RotDirection = Vector3.zero;
-
     public UpgradeHpBar hpBarComp;
 
     private float currentHp;
-    private float maxHp;
 
     public HpStatusBroadCast HpStatusBroadCastDelegates;
+    private float maxHp;
+
+    private Vector3 MoveDirection = Vector3.zero;
+    private Vector3 RotDirection = Vector3.zero;
 
     [field: SerializeField]
     private float CurrentHp

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,22 +11,21 @@ public class HpBar : MonoBehaviour
     public MyCharacterController _characterControllerScript;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         UpdateHpBarStatus();
     }
 
-    void UpdateHpBarStatus()
+    private void UpdateHpBarStatus()
     {
-        float currentHp = _characterControllerScript.CurrentHp;
-        float maxHp = _characterControllerScript.MaxHp;
-        float lerpSpeed = 5f;
+        var currentHp = _characterControllerScript.CurrentHp;
+        var maxHp = _characterControllerScript.MaxHp;
+        var lerpSpeed = 5f;
 
         // 체력 텍스트 표시
         _hpStringState.text = string.Format("{0} / {1}", currentHp, maxHp);
@@ -42,7 +39,8 @@ public class HpBar : MonoBehaviour
         // // hp / maxHp => 0~1사이의 값을 갖게되고 0.5 * fullWidth하게 되면 => 절반으로 마스킹 사이즈가 된다.
         // _mask.GetComponent<RectTransform>().sizeDelta = new Vector2(currentHp / maxHp * fullWidth, height);
 
-        float fillAmount = currentHp / maxHp;
-        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount, Time.deltaTime * lerpSpeed);
+        var fillAmount = currentHp / maxHp;
+        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount,
+            Time.deltaTime * lerpSpeed);
     }
 }
