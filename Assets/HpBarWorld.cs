@@ -29,6 +29,9 @@ public class HpBarWorld : MonoBehaviour
         float maxHp = _characterControllerScript.MaxHp;
         float lerpSpeed = 5f;
 
+        float fillAmount = currentHp / maxHp;
+        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount, Time.deltaTime * lerpSpeed);
+        
         // 체력 텍스트 표시
         //_hpStringState.text = string.Format("{0} / {1}", currentHp, maxHp);
 
@@ -40,8 +43,5 @@ public class HpBarWorld : MonoBehaviour
         //
         // // hp / maxHp => 0~1사이의 값을 갖게되고 0.5 * fullWidth하게 되면 => 절반으로 마스킹 사이즈가 된다.
         // _mask.GetComponent<RectTransform>().sizeDelta = new Vector2(currentHp / maxHp * fullWidth, height);
-
-        float fillAmount = currentHp / maxHp;
-        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount, Time.deltaTime * lerpSpeed);
     }
 }
