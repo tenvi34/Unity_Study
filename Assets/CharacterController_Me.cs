@@ -68,6 +68,13 @@ public class MyCharacterController : MonoBehaviour
         // 체력 감소 및 회복
         if (Input.GetKeyDown(KeyCode.P)) CurrentHp -= 10;
         if (Input.GetKeyDown(KeyCode.O)) CurrentHp += 20;
+        
+        // 공격
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            //GetComponent<Animator>().Play("Punching");
+            GetComponent<Animator>().SetTrigger("Punching");
+        }
 
         // 벡터 정규화
         MoveDirection.Normalize();
