@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 
 public class MyCharacterController : MonoBehaviour
 {
+    public float BlendTime = 0.0f;
+    
     public float MoveSpeed = 5.0f;
     public float RotDegreeSeconds = 180.0f;
     public float jumpPower = 10.0f;
@@ -73,7 +75,8 @@ public class MyCharacterController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Y))
         {
             //GetComponent<Animator>().Play("Punching");
-            GetComponent<Animator>().SetTrigger("Punching");
+            //GetComponent<Animator>().SetTrigger("Punching");
+            GetComponent<Animator>().CrossFade("Punching", BlendTime, -1, 0f);
         }
 
         // 벡터 정규화
