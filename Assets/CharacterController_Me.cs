@@ -11,6 +11,8 @@ public class MyCharacterController : MonoBehaviour
     public float RotDegreeSeconds = 180.0f;
     public float jumpPower = 10.0f;
 
+    private Animator animator;
+
     [field: SerializeField] public float CurrentHp { get; private set; }
 
 
@@ -43,6 +45,7 @@ public class MyCharacterController : MonoBehaviour
     {
         Awake();
         CurrentHp = 500;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -50,11 +53,16 @@ public class MyCharacterController : MonoBehaviour
     {
         Awake();
 
+        bool isAttacking = animator.GetBool("isAttacking");
+
         var Vertical = Input.GetAxis("Vertical");
         var Horizontal = Input.GetAxis("Horizontal");
 
-        MoveDirection = transform.forward * Vertical;
-        RotDirection = transform.right * Horizontal;
+        if (!isAttacking)
+        {
+            MoveDirection = transform.forward * Vertical;
+            RotDirection = transform.right * Horizontal;
+        }
 
         if (Vertical != 0.0f)
             GetComponent<Animator>().SetFloat("Speed", Vertical);
@@ -74,9 +82,13 @@ public class MyCharacterController : MonoBehaviour
         // 공격
         if (Input.GetKeyDown(KeyCode.Y))
         {
+            animator.SetBool("isAttacking", true);
             //GetComponent<Animator>().Play("Punching");
             //GetComponent<Animator>().SetTrigger("Punching");
             GetComponent<Animator>().CrossFade("Punching", BlendTime, -1, 0f);
+            StartCoroutine(ResetAttackState());
+            
+            Debug.Log("Attack");
         }
 
         // 벡터 정규화
@@ -151,6 +163,19 @@ public class MyCharacterController : MonoBehaviour
         GetComponent<Rigidbody>()
             .AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
     }
+    
+    private IEnumerator ResetAttackState()
+    {
+        // 현재 실행 중인 애니메이션 상태 정보 가져오기
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        
+        // 공격 애니메이션이 종료될 때까지 대기
+        yield return new WaitForSeconds(stateInfo.length);
+        
+        animator.SetBool("isAttacking", false);
+    }
+    
+    // ========================================================================================================//
 
     // 서버에 request 부르는 함수 호출
     private IEnumerator GetRequest(string url)
