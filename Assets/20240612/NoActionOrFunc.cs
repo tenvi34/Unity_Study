@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void PrintFunc();
-
-public class ActionOrFunc : MonoBehaviour
+public class NoActionOrFunc : MonoBehaviour
 {
-    private PrintFunc printFunc;
-    
+    string funcName;
+    // normalcase
     void Func1()
     {
         Debug.Log("Func1");
@@ -39,32 +37,52 @@ public class ActionOrFunc : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        printFunc = null;
+        funcName = "";
         
         if (Input.GetKeyDown(KeyCode.A))
         {
-            printFunc = Func1;
+            funcName = "Func1";
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            printFunc = Func2;
+            funcName = "Func2";
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            printFunc = Func3;
+            funcName = "Func3";
         }
         else if (Input.GetKeyDown(KeyCode.F))
         {
-            printFunc = Func4;
+            funcName = "Func4";
         }
         else if (Input.GetKeyDown(KeyCode.G))
         {
-            printFunc = Func5;
+            funcName = "Func5";
         }
+        
     }
 
-    private void LateUpdate()
+    void LateUpdate()
     {
-        printFunc?.Invoke();
+        if (funcName == "Func1")
+        {
+            Func1();
+        }
+        else if (funcName == "Func2")
+        {
+            Func2();
+        }
+        else if (funcName == "Func3")
+        {
+            Func3();
+        }
+        else if (funcName == "Func4")
+        {
+            Func4();
+        }
+        else if (funcName == "Func5")
+        {
+            Func5();
+        }
     }
 }

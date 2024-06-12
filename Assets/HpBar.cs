@@ -40,7 +40,6 @@ public class HpBar : MonoBehaviour
         // _mask.GetComponent<RectTransform>().sizeDelta = new Vector2(currentHp / maxHp * fullWidth, height);
 
         var fillAmount = currentHp / maxHp;
-        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount,
-            Time.deltaTime * lerpSpeed);
+        _mask.fillAmount = Mathf.Lerp(_mask.fillAmount, fillAmount, Time.deltaTime * lerpSpeed);
     }
 }
