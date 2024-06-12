@@ -1,21 +1,42 @@
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class UpgradeHpBar : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI hpText;
+    private List<Action<float, float>> _callbacks = new List<Action<float, float>>();
+ 
+    [SerializeField]
+    private TextMeshProUGUI hpText;
 
     [SerializeField] private RectTransform maskTrasform;
     [SerializeField] private RectTransform backgroundTransform;
-    private float maxHeight;
 
     private float maxWidth;
+    private float maxHeight;
 
-    // Start is called before the first frame update
-    private void Start()
+    [SerializeField] private UpgradeCharController _script;
+
+    // public static HpBar2 operator +(HpBar2 origin, Action<float, float> action2)
+    // {
+    //     origin._callbacks.Add(action2);
+    //     return origin;
+    // }
+
+    void Awake()
     {
         maxWidth = backgroundTransform.sizeDelta.x;
         maxHeight = backgroundTransform.sizeDelta.y;
+
+        _script.HpStatusBroadCastDelegates += UpdateHpStatus;
+
+        // Action<float, float> action = (float currentHp, float maxHp) => { UpdateHpStatus(currentHp, maxHp); };
+        //
+        // var hpBar2 = this;
+        // hpBar2 += action;
+        //
+        // _callbacks.Add(action);
     }
 
     public void UpdateHpStatus(float currentHp, float maxHp)
@@ -23,8 +44,11 @@ public class UpgradeHpBar : MonoBehaviour
         hpText.text = $"{currentHp}/{maxHp}";
 
         // 조건문
-        var factor = 1.0f;
-        if (maxHp != 0.0f) factor = currentHp / maxHp;
+        float factor = 1.0f;
+        if (maxHp != 0.0f)
+        {
+            factor = currentHp / maxHp;
+        }
         //
         // //삼항 연산자
         // factor = maxHp != 0.0f ? currentHp / maxHp : 1.0f;
