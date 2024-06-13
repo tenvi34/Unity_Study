@@ -12133,7 +12133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400096, guid: 9427856e334e2324a8e5ede0a88de06c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 22.53
+      value: 22.422
       objectReference: {fileID: 0}
     - target: {fileID: 400096, guid: 9427856e334e2324a8e5ede0a88de06c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13623,7 +13623,7 @@ PrefabInstance:
     - target: {fileID: 1638234766320340185, guid: 9427856e334e2324a8e5ede0a88de06c,
         type: 3}
       propertyPath: jumpPower
-      value: 500
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8793899888474886749, guid: 9427856e334e2324a8e5ede0a88de06c, type: 3}

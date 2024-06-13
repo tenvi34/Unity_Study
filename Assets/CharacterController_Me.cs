@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -13,21 +14,26 @@ public class MyCharacterController : MonoBehaviour
 
     private Animator animator;
 
+    // 콤보
+    private bool canCombo = false;
+    public int CurrentComboState = 0;
+    void SetCanCombo(int v)
+    {
+        canCombo = v == 1;
+    }
+    //
+
     [field: SerializeField] public float CurrentHp { get; private set; }
-
-
     [field: SerializeField] public float MaxHp { get; private set; }
 
     private bool isGrounded = true;
 
     // 이동하는 방향에 대한 변수
     private Vector3 MoveDirection;
-
     // 회전하는 방향에 대한 변수
     private Vector3 RotDirection;
 
     private float startTime;
-
     public float MoveSpeedFacter { private get; set; }
 
     private void Awake()
@@ -80,16 +86,7 @@ public class MyCharacterController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O)) CurrentHp += 20;
         
         // 공격
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            animator.SetBool("isAttacking", true);
-            //GetComponent<Animator>().Play("Punching");
-            //GetComponent<Animator>().SetTrigger("Punching");
-            GetComponent<Animator>().CrossFade("Punching", BlendTime, -1, 0f);
-            StartCoroutine(ResetAttackState());
-            
-            Debug.Log("Attack");
-        }
+        Attack();
 
         // 벡터 정규화
         MoveDirection.Normalize();
@@ -163,6 +160,57 @@ public class MyCharacterController : MonoBehaviour
         GetComponent<Rigidbody>()
             .AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
     }
+
+    public void Attack()
+    {
+        // 공격 - 주먹
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            animator.SetBool("isAttacking", true);
+            //GetComponent<Animator>().Play("Punching");
+            //GetComponent<Animator>().SetTrigger("Punching");
+            GetComponent<Animator>().CrossFade("Punching", BlendTime, -1, 0f);
+            StartCoroutine(ResetAttackState());
+            
+            Debug.Log("Punch");
+        }
+        
+        // 공격 - 발차기
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            animator.SetBool("isAttacking", true);
+            GetComponent<Animator>().CrossFade("MMA_Kick", BlendTime, -1, 0f);
+            StartCoroutine(ResetAttackState());
+            
+            Debug.Log("Kick");
+        }
+        
+        // 공격 - 콤보
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            if (canCombo)
+            {
+                if (CurrentComboState == 0)
+                {
+                    animator.SetBool("isAttacking", true);
+                    GetComponent<Animator>().CrossFade("MMA_Kick", BlendTime, -1, 0f);
+                    StartCoroutine(ResetAttackState());
+
+                    CurrentComboState++;
+                }
+            }
+            else
+            {
+                CurrentComboState = 0;
+                animator.SetBool("isAttacking", true);
+                GetComponent<Animator>().CrossFade("Punching", BlendTime, -1, 0f);
+                StartCoroutine(ComboSystem());
+                StartCoroutine(ResetAttackState());
+            }
+            
+            Debug.Log("Combo");
+        }
+    }
     
     private IEnumerator ResetAttackState()
     {
@@ -173,6 +221,26 @@ public class MyCharacterController : MonoBehaviour
         yield return new WaitForSeconds(stateInfo.length);
         
         animator.SetBool("isAttacking", false);
+    }
+
+    IEnumerator ComboSystem()
+    {
+        int stateName = GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).shortNameHash;
+        
+        while (true)
+        {
+            Debug.Log(stateName);
+            if (stateName == Animator.StringToHash("MMA_Kick") || stateName == Animator.StringToHash("Punching"))
+            {
+                yield return null;
+            }
+            else
+            {
+                break;
+            }
+        }
+        canCombo = false;
+        CurrentComboState = 0;
     }
     
     // ========================================================================================================//
