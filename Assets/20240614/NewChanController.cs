@@ -81,14 +81,8 @@ public class NewChanController : MonoBehaviour
             while (true)
             {
                 var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
-                if (stateInfo?.fullPathHash == animationNameHash || stateInfo?.shortNameHash == animationNameHash)
-                {
-                    yield return null;        
-                }
-                else
-                {
-                    break;
-                }
+                if (stateInfo?.fullPathHash == animationNameHash || stateInfo?.shortNameHash == animationNameHash) yield return null;
+                else break;
             }
 
             if (_animator != null)
