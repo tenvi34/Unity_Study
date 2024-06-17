@@ -12,6 +12,7 @@ public class HashingValue
     public static readonly int SpeedStringHash = Animator.StringToHash("Speed");
     public static readonly int JumpStringHash = Animator.StringToHash("JUMP00_Generic");
     public static readonly int PunchStringHash = Animator.StringToHash("PUNCH_Generic");
+    public static readonly int LeftPunchStringHash = Animator.StringToHash("LeftPUNCH_Generic");
 }
 
 public class NewChanController : MonoBehaviour
@@ -23,6 +24,9 @@ public class NewChanController : MonoBehaviour
     
     // 바인딩형
     public AudioClip OnHitAudioClip = null;
+    public GameObject OnHitParticle = null;
+    public Transform RightHandTransform;
+    //public Transform LeftHandTransform;
 
     private float horizontal = 0.0f;
     private float vertical = 0.0f;
@@ -30,6 +34,9 @@ public class NewChanController : MonoBehaviour
     private Animator _animator;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
+    private ParticleSystemController _particleSystemController;
+
+    private Coroutine CurrentAnimationCoroutine = null;
 
     void Awake()
     {
@@ -43,6 +50,8 @@ public class NewChanController : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         if (!_audioSource) Debug.Log("Not Found AudioSource");
         if (! OnHitAudioClip) Debug.Log("OnHitAudioClip Not Bound");
+        _particleSystemController = GetComponent<ParticleSystemController>();
+        if (! _particleSystemController) Debug.Log("Not Found ParticleSystemController");
     }
 
     // Update is called once per frame
@@ -55,13 +64,20 @@ public class NewChanController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _rigidbody?.AddForce(Vector3.up * JumpPower, ForceMode.Impulse);
-            _animator.CrossFade(HashingValue.JumpStringHash, 0, 0, 0);
+            //_animator.CrossFade(HashingValue.JumpStringHash, 0, 0, 0);
+            PlayAnimation(HashingValue.JumpStringHash);
         }
         
         // 공격
         if (Input.GetKeyDown(KeyCode.K))
         {
-            _animator.CrossFade(HashingValue.PunchStringHash, 0.1f, 0 );
+            //_animator.CrossFade(HashingValue.PunchStringHash, 0.1f, 0);
+            PlayAnimation(HashingValue.PunchStringHash, 1.0f);
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            //_animator.CrossFade(HashingValue.LeftPunchStringHash, 0.1f, 0);
+            PlayAnimation(HashingValue.LeftPunchStringHash);
         }
     }
 
@@ -94,5 +110,47 @@ public class NewChanController : MonoBehaviour
     {
         // PlayOneShot() -> 일회성
         _audioSource?.PlayOneShot(OnHitAudioClip);
+        //                                                        , 어디에 생성할지              ,             어느 방향으로 할지
+        _particleSystemController?.OnHit(OnHitParticle, null, RightHandTransform.position, transform.forward);
+    }
+
+    void PlayAnimation(int animationNameHash, float speed = 1.0f)
+    {
+        if (CurrentAnimationCoroutine != null)
+        {
+            StopCoroutine(CurrentAnimationCoroutine);
+            if (_animator != null)
+            {
+                _animator.speed = 1.0f;
+            }
+        }
+
+        CurrentAnimationCoroutine = StartCoroutine(PlayAnimation_Internal(animationNameHash, speed));
+    }
+
+    IEnumerator PlayAnimation_Internal(int animationNameHash, float speed)
+    {
+        if (_animator != null)
+        {
+            _animator.CrossFade(animationNameHash, 0.0f, 0);
+            Debug.Log("Before");
+            _animator.speed = speed;
+        }
+
+        yield return null;
+
+        while (true)
+        {
+            var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo?.fullPathHash == animationNameHash || stateInfo?.shortNameHash == animationNameHash) yield return null;
+            else break;
+        }
+
+        if (_animator != null)
+        {
+            _animator.speed = 1;
+            Debug.Log("After");
+        }
+        CurrentAnimationCoroutine = null;
     }
 }
