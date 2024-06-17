@@ -17,6 +17,88 @@ public class HashingValue
 
 public class NewChanController : MonoBehaviour
 {
+    public class AnimationWrapper
+    {
+        // 선언
+        private NewChanController _newChanController;
+        
+        // 선언 (ex 이사)
+        private Animator _animator;
+        private Coroutine CurrentAnimationCoroutine = null;
+
+        // 생성자 선언
+        AnimationWrapper(NewChanController newChanController)
+        {
+            _newChanController = newChanController;
+            
+            // caching 
+            _animator = _newChanController?.GetComponent<Animator>();
+            if (!_animator)
+                Debug.Log("Not Found Animator");
+
+            CurrentAnimationCoroutine = null;
+        }
+
+        public void FixedUpdate(float vertical)
+        {
+            _animator?.SetFloat(HashingValue.SpeedStringHash, vertical);
+        }
+
+        public static AnimationWrapper NewAnimationWrapper(NewChanController newChanController)
+        {
+            return new AnimationWrapper(newChanController);
+        }
+        
+        public void PlayAnimation(int animationNameHash, float speed = 1.0f)
+        {
+            // 현재 재생중인 애니메이션이 있으면 그에 대한 플레잉 여부를 코루틴으로 체크하고
+            // 그 재생에 대한 옵션을 정지시키고
+            if (CurrentAnimationCoroutine != null)
+            {
+                _newChanController.StopCoroutine(CurrentAnimationCoroutine);
+                CurrentAnimationCoroutine = null;
+                if (_animator != null)
+                {
+                    // 애니메이터의 속도는 그대로 바꿔주고
+                    _animator.speed = 1.0f;
+                }
+            }
+        
+            // 새로운 애니메이션을 플레잉하는 코루틴 생성
+            CurrentAnimationCoroutine = _newChanController.StartCoroutine(PlayAnimation_Internal(animationNameHash, speed));
+        }
+
+        IEnumerator PlayAnimation_Internal(int animationNameHash, float speed)
+        {
+            if (_animator != null)
+            {
+                _animator.CrossFade(animationNameHash, 0.0f, 0);
+                _animator.speed = speed;
+            }
+        
+            yield return null;
+        
+            while (true)
+            {
+                var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
+                if (stateInfo?.fullPathHash == animationNameHash || stateInfo?.shortNameHash == animationNameHash)
+                {
+                    yield return null;        
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (_animator != null)
+            {
+                _animator.speed = 1;
+            }
+            CurrentAnimationCoroutine = null;
+        }
+    }
+    
     // 일반형
     public float Speed = 0.0f;
     public float RotSpeedDegree = 0.0f;
@@ -35,6 +117,7 @@ public class NewChanController : MonoBehaviour
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     private ParticleSystemController _particleSystemController;
+    private AnimationWrapper _animationWrapper;
 
     private Coroutine CurrentAnimationCoroutine = null;
 
@@ -43,15 +126,19 @@ public class NewChanController : MonoBehaviour
         Debug.Log("Awake");
         
         // caching
-        _animator = GetComponent<Animator>();
-        if (!_animator) Debug.Log("Not Found Animator");
+        
         _rigidbody = GetComponent<Rigidbody>();
         if (!_rigidbody) Debug.Log("Not Found RigidBody");
+        
         _audioSource = GetComponent<AudioSource>();
         if (!_audioSource) Debug.Log("Not Found AudioSource");
         if (! OnHitAudioClip) Debug.Log("OnHitAudioClip Not Bound");
+        
         _particleSystemController = GetComponent<ParticleSystemController>();
         if (! _particleSystemController) Debug.Log("Not Found ParticleSystemController");
+        
+        _animationWrapper = AnimationWrapper.NewAnimationWrapper(this);
+        if (_animationWrapper == null) Debug.Log("Creation Fail AnimationWrapper");
     }
 
     // Update is called once per frame
@@ -92,8 +179,8 @@ public class NewChanController : MonoBehaviour
         
             _rigidbody.MovePosition(nextPos);
         }
-    
-        _animator?.SetFloat(HashingValue.SpeedStringHash, vertical);
+        
+        _animationWrapper.FixedUpdate(vertical);
 
         if (horizontal != 0.0f)
         {
@@ -116,18 +203,10 @@ public class NewChanController : MonoBehaviour
 
     void PlayAnimation(int animationNameHash, float speed = 1.0f)
     {
-        if (CurrentAnimationCoroutine != null)
-        {
-            StopCoroutine(CurrentAnimationCoroutine);
-            if (_animator != null)
-            {
-                _animator.speed = 1.0f;
-            }
-        }
-
-        CurrentAnimationCoroutine = StartCoroutine(PlayAnimation_Internal(animationNameHash, speed));
+        _animationWrapper.PlayAnimation(animationNameHash, speed);
     }
 
+    /*
     IEnumerator PlayAnimation_Internal(int animationNameHash, float speed)
     {
         if (_animator != null)
@@ -153,4 +232,5 @@ public class NewChanController : MonoBehaviour
         }
         CurrentAnimationCoroutine = null;
     }
+    */
 }
