@@ -21,7 +21,7 @@ public class AnimNotification : MonoBehaviour
                 _newChanController?.OnHit();
                 break;
             default:
-                Debug.Log($"OnNotify {sValue} not defined");
+                //Debug.Log($"OnNotify {sValue} not defined");
                 break;
         }
     }

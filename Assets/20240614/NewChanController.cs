@@ -28,6 +28,10 @@ public class HashingValue
         HashingValue.ComboAnimations.Length > num ? HashingValue.ComboAnimations[num] : HashingValue.ComboAnimations[^1];
 }
 
+/// <summary>
+/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// </summary>
+
 public class NewChanController : MonoBehaviour
 {
     public class AnimationWrapper
@@ -135,6 +139,8 @@ public class NewChanController : MonoBehaviour
     // 바인딩형
     public AudioClip OnHitAudioClip = null;
     public GameObject OnHitParticle = null;
+    public GameObject OnHitDamageField = null;
+    
     public Transform RightHandTransform;
     //public Transform LeftHandTransform;
 
@@ -295,6 +301,9 @@ public class NewChanController : MonoBehaviour
         _audioSource?.PlayOneShot(OnHitAudioClip);
         //                                                        , 어디에 생성할지              ,             어느 방향으로 할지
         _particleSystemController?.OnHit(OnHitParticle, null, RightHandTransform.position, transform.forward);
+
+        GameObject damageFieldInstance = Instantiate(OnHitDamageField, transform.position, transform.rotation);
+        damageFieldInstance.GetComponent<DamageField>().Owner = gameObject;
     }
 
     void PlayAnimation(int animationNameHash, float speed = 1.0f)
