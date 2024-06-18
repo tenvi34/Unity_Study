@@ -11,8 +11,18 @@ public class HashingValue
     // readonly는 초기화 한번 할때만 변수를 셋팅할 수 있고 그 다음부터는 못하게 한다
     public static readonly int SpeedStringHash = Animator.StringToHash("Speed");
     public static readonly int JumpStringHash = Animator.StringToHash("JUMP00_Generic");
+    // 공격
     public static readonly int PunchStringHash = Animator.StringToHash("PUNCH_Generic");
-    public static readonly int LeftPunchStringHash = Animator.StringToHash("LeftPUNCH_Generic");
+    public static readonly int LeftPunchStringHash = Animator.StringToHash("PUNCH_L");
+    public static readonly int RightKickStringHash = Animator.StringToHash("KICK_R");
+    public static readonly int LeftKickStringHash = Animator.StringToHash("KICK_L");
+
+    public static readonly int[] ComboAnimations = { 
+        PunchStringHash,
+        LeftPunchStringHash,
+        RightKickStringHash,
+        LeftKickStringHash,
+    };
 }
 
 public class NewChanController : MonoBehaviour
@@ -68,6 +78,25 @@ public class NewChanController : MonoBehaviour
             CurrentAnimationCoroutine = _newChanController.StartCoroutine(PlayAnimation_Internal(animationNameHash, speed));
         }
 
+        public bool CanComboState(int checkAnimationName)
+        {
+            if (IsName(checkAnimationName))
+            {
+                var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
+                Debug.Log(stateInfo?.normalizedTime);
+                // 애니메이션의 길이는 0~1인데 normalizedTime 부근을 넘어서 누르면 콤보가 가능한 상태로 인식
+                return stateInfo?.normalizedTime >= 0.3;
+            }
+
+            return false;
+        }
+
+        public bool IsName(int targetAnimationHash)
+        {
+            var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
+            return stateInfo?.fullPathHash == targetAnimationHash || stateInfo?.shortNameHash == targetAnimationHash;
+        }
+
         IEnumerator PlayAnimation_Internal(int animationNameHash, float speed)
         {
             if (_animator != null)
@@ -112,8 +141,10 @@ public class NewChanController : MonoBehaviour
     private AudioSource _audioSource;
     private ParticleSystemController _particleSystemController;
     private AnimationWrapper _animationWrapper;
+    
+    private Coroutine ComboProcessCoroutine = null;
 
-    private Coroutine CurrentAnimationCoroutine = null;
+    //private Coroutine CurrentAnimationCoroutine = null;
 
     void Awake()
     {
@@ -150,6 +181,7 @@ public class NewChanController : MonoBehaviour
         }
         
         // 공격
+        /*
         if (Input.GetKeyDown(KeyCode.K))
         {
             //_animator.CrossFade(HashingValue.PunchStringHash, 0.1f, 0);
@@ -159,6 +191,71 @@ public class NewChanController : MonoBehaviour
         {
             //_animator.CrossFade(HashingValue.LeftPunchStringHash, 0.1f, 0);
             PlayAnimation(HashingValue.LeftPunchStringHash);
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            //_animator.CrossFade(HashingValue.LeftPunchStringHash, 0.1f, 0);
+            PlayAnimation(HashingValue.RightKickStringHash);
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            //_animator.CrossFade(HashingValue.LeftPunchStringHash, 0.1f, 0);
+            PlayAnimation(HashingValue.LeftKickStringHash);
+        }
+        */
+        
+        // 콤보 공격
+        ComboProcess();
+    }
+    
+    IEnumerator ComboProcess_Loop()
+    {
+        uint currentComboNumber = 0;
+ 
+        // 최초에는 코루틴이 안도는 것이므로 첫번째 애니메이션을 실행한다
+        PlayAnimation(HashingValue.ComboAnimations[currentComboNumber]);
+
+        // 애니메이션 플레잉 여부를 체크하기 위해 한 프레임 기다린다.
+        yield return null;
+    
+        // _animationWrapper가 null이 아닌경우에만 루프를 수행한다.
+        while (_animationWrapper != null)
+        {
+            // 현재 재생중인 애니메이션이 combo애니메이션이고
+            if (_animationWrapper.IsName(HashingValue.ComboAnimations[currentComboNumber]))
+            {
+                // P를 눌렀을 때 콤보가 가능한 상태이면
+                if (Input.GetKeyDown(KeyCode.P) && 
+                    _animationWrapper.CanComboState(HashingValue.ComboAnimations[currentComboNumber]))
+                {
+                    // 다음 콤보를 위해 인덱스를 증가하고
+                    currentComboNumber++;
+                    // 다음 콤보 애니메이션을 재생한다.
+                    PlayAnimation(HashingValue.ComboAnimations[currentComboNumber]);
+                }
+            
+                // while의 무한루프를 1frame씩 끊어가기 위해 yield return null을 해준다.
+                yield return null;
+            }
+            else
+            {
+                // 콤보에 유효한 애니메이션이 없으므로 while을 빠져나간다.
+                break;
+            }
+        }
+
+        // 그리고 다음 코루틴을 정상 작동 시키기 위해 null만든다.
+        ComboProcessCoroutine = null;
+    }
+    
+    void ComboProcess()
+    {
+        if (ComboProcessCoroutine == null)
+        {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                ComboProcessCoroutine = StartCoroutine(ComboProcess_Loop());
+            }
         }
     }
 
