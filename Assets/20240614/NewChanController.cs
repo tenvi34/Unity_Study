@@ -23,6 +23,9 @@ public class HashingValue
         RightKickStringHash,
         LeftKickStringHash,
     };
+    
+    public static int GetComboAnimNumber(int num) =>
+        HashingValue.ComboAnimations.Length > num ? HashingValue.ComboAnimations[num] : HashingValue.ComboAnimations[^1];
 }
 
 public class NewChanController : MonoBehaviour
@@ -85,7 +88,7 @@ public class NewChanController : MonoBehaviour
                 var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
                 Debug.Log(stateInfo?.normalizedTime);
                 // 애니메이션의 길이는 0~1인데 normalizedTime 부근을 넘어서 누르면 콤보가 가능한 상태로 인식
-                return stateInfo?.normalizedTime >= 0.3;
+                return stateInfo?.normalizedTime >= 0.7;
             }
 
             return false;
@@ -94,14 +97,16 @@ public class NewChanController : MonoBehaviour
         public bool IsName(int targetAnimationHash)
         {
             var stateInfo = _animator?.GetCurrentAnimatorStateInfo(0);
-            return stateInfo?.fullPathHash == targetAnimationHash || stateInfo?.shortNameHash == targetAnimationHash;
+            var nextStateInfo = _animator?.GetNextAnimatorStateInfo(0);
+            return stateInfo?.fullPathHash == targetAnimationHash || stateInfo?.shortNameHash == targetAnimationHash 
+                || nextStateInfo?.fullPathHash == targetAnimationHash || nextStateInfo?.shortNameHash == targetAnimationHash;
         }
 
         IEnumerator PlayAnimation_Internal(int animationNameHash, float speed)
         {
             if (_animator != null)
             {
-                _animator.CrossFade(animationNameHash, 0.0f, 0);
+                _animator.CrossFade(animationNameHash, 0.1f, 0);
                 _animator.speed = speed;
             }
         
@@ -210,7 +215,7 @@ public class NewChanController : MonoBehaviour
     
     IEnumerator ComboProcess_Loop()
     {
-        uint currentComboNumber = 0;
+        int currentComboNumber = 0;
  
         // 최초에는 코루틴이 안도는 것이므로 첫번째 애니메이션을 실행한다
         PlayAnimation(HashingValue.ComboAnimations[currentComboNumber]);
@@ -222,18 +227,18 @@ public class NewChanController : MonoBehaviour
         while (_animationWrapper != null)
         {
             // 현재 재생중인 애니메이션이 combo애니메이션이고
-            if (_animationWrapper.IsName(HashingValue.ComboAnimations[currentComboNumber]))
+            if (_animationWrapper.IsName(HashingValue.GetComboAnimNumber(currentComboNumber)))
             {
                 // P를 눌렀을 때 콤보가 가능한 상태이면
                 if (Input.GetKeyDown(KeyCode.P) && 
-                    _animationWrapper.CanComboState(HashingValue.ComboAnimations[currentComboNumber]))
+                    _animationWrapper.CanComboState(HashingValue.GetComboAnimNumber(currentComboNumber)))
                 {
                     // 다음 콤보를 위해 인덱스를 증가하고
                     currentComboNumber++;
                     // 다음 콤보 애니메이션을 재생한다.
-                    PlayAnimation(HashingValue.ComboAnimations[currentComboNumber]);
+                    if (HashingValue.ComboAnimations.Length > currentComboNumber)
+                        PlayAnimation(HashingValue.GetComboAnimNumber(currentComboNumber));
                 }
-            
                 // while의 무한루프를 1frame씩 끊어가기 위해 yield return null을 해준다.
                 yield return null;
             }
