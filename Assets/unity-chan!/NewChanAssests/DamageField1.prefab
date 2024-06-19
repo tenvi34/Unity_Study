@@ -70,3 +70,4 @@ MonoBehaviour:
   damageFieldHitType: 1
   damageFieldDuration: 0
   hitMaxCount: 5
+  knockBackPower: 15

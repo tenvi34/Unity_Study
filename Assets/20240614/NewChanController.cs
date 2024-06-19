@@ -34,6 +34,24 @@ public class HashingValue
 
 public class NewChanController : MonoBehaviour
 {
+    public enum OnHitType
+    {
+        None,
+        Punch_Left,
+        Punch_Right,
+        Kick_Left,
+        Kick_Right,
+    }
+    [Serializable]
+    public class OnHitData
+    {
+        public OnHitType HitType;
+        // 바인딩형
+        public AudioClip AudioClip = null;
+        public GameObject Particle = null;
+        public GameObject FireDamageField = null;
+    }
+    
     public class AnimationWrapper
     {
         // 선언
@@ -136,13 +154,15 @@ public class NewChanController : MonoBehaviour
     public float RotSpeedDegree = 0.0f;
     public float JumpPower = 0.0f;
     
-    // 바인딩형
-    public AudioClip OnHitAudioClip = null;
-    public GameObject OnHitParticle = null;
-    public GameObject OnHitDamageField = null;
-    
+    public Transform LeftHandTransform;
     public Transform RightHandTransform;
-    //public Transform LeftHandTransform;
+    public Transform LeftFootTransform;
+    public Transform RightFootTransform;
+
+    // 자료구조 List Tree 사용
+    [SerializeField]
+    public List<OnHitData> HitDataInspector = new List<OnHitData>();
+    private Dictionary<OnHitType, OnHitData> HitDatas = new Dictionary<OnHitType, OnHitData>();
 
     private float horizontal = 0.0f;
     private float vertical = 0.0f;
@@ -160,15 +180,20 @@ public class NewChanController : MonoBehaviour
     void Awake()
     {
         Debug.Log("Awake");
+
+        foreach (var t in HitDataInspector)
+        {
+            HitDatas.Add(t.HitType, t);
+        }
+        HitDataInspector.Clear();
         
         // caching
-        
         _rigidbody = GetComponent<Rigidbody>();
         if (!_rigidbody) Debug.Log("Not Found RigidBody");
         
         _audioSource = GetComponent<AudioSource>();
         if (!_audioSource) Debug.Log("Not Found AudioSource");
-        if (! OnHitAudioClip) Debug.Log("OnHitAudioClip Not Bound");
+        //if (! OnHitAudioClip) Debug.Log("OnHitAudioClip Not Bound");
         
         _particleSystemController = GetComponent<ParticleSystemController>();
         if (! _particleSystemController) Debug.Log("Not Found ParticleSystemController");
@@ -295,14 +320,38 @@ public class NewChanController : MonoBehaviour
         }
     }
 
-    public void OnHit()
+    public void OnHit_PunchLeft()
     {
         // PlayOneShot() -> 일회성
-        _audioSource?.PlayOneShot(OnHitAudioClip);
-        //                                                        , 어디에 생성할지              ,             어느 방향으로 할지
-        _particleSystemController?.OnHit(OnHitParticle, null, RightHandTransform.position, transform.forward);
-
-        GameObject damageFieldInstance = Instantiate(OnHitDamageField, transform.position, transform.rotation);
+        _audioSource?.PlayOneShot(HitDatas[OnHitType.Punch_Left].AudioClip);
+        //                                                                                  , 어디에 생성할지             ,         어느 방향으로 할지
+        _particleSystemController?.OnHit(HitDatas[OnHitType.Punch_Left].Particle, null, LeftHandTransform.position, transform.forward);
+        
+        GameObject damageFieldInstance = Instantiate(HitDatas[OnHitType.Punch_Left].FireDamageField, transform.position, transform.rotation);
+        damageFieldInstance.GetComponent<DamageField>().Owner = gameObject;
+    }
+    public void OnHit_PunchRight()
+    {
+        _audioSource?.PlayOneShot(HitDatas[OnHitType.Punch_Right].AudioClip);
+        _particleSystemController?.OnHit(HitDatas[OnHitType.Punch_Right].Particle, null, RightHandTransform.position, transform.forward);
+        
+        GameObject damageFieldInstance = Instantiate(HitDatas[OnHitType.Punch_Right].FireDamageField, transform.position, transform.rotation);
+        damageFieldInstance.GetComponent<DamageField>().Owner = gameObject;
+    }
+    public void OnHit_KickLeft()
+    {
+        _audioSource?.PlayOneShot(HitDatas[OnHitType.Kick_Left].AudioClip);
+        _particleSystemController?.OnHit(HitDatas[OnHitType.Kick_Left].Particle, null, LeftFootTransform.position, transform.up);
+        
+        GameObject damageFieldInstance = Instantiate(HitDatas[OnHitType.Kick_Left].FireDamageField, transform.position, transform.rotation);
+        damageFieldInstance.GetComponent<DamageField>().Owner = gameObject;
+    }
+    public void OnHit_KickRight()
+    {
+        _audioSource?.PlayOneShot(HitDatas[OnHitType.Kick_Right].AudioClip);
+        _particleSystemController?.OnHit(HitDatas[OnHitType.Kick_Right].Particle, null, RightFootTransform.position, transform.up);
+        
+        GameObject damageFieldInstance = Instantiate(HitDatas[OnHitType.Kick_Right].FireDamageField, transform.position, transform.rotation);
         damageFieldInstance.GetComponent<DamageField>().Owner = gameObject;
     }
 

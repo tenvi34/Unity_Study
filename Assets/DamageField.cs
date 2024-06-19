@@ -2,14 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum DamageFieldEnum
 {
     None,
-    DamageFieldPlayerPunch1,
-    DamageFieldPlayerPunchL,
-    DamageFieldPlayerKickR,
-    DamageFieldPlayerKickL,
+    DamageFieldPlayerAttack1,
+    DamageFieldPlayerAttack2,
+    DamageFieldPlayerAttack3,
+    DamageFieldPlayerAttack4,
 }
 
 public enum DamageFieldHitType
@@ -33,6 +34,10 @@ public class DamageField : MonoBehaviour
     // 데미지 필드 최대 히트 카운트
     [SerializeField] 
     private float hitMaxCount;
+
+    [SerializeField] 
+    private float knockBackPower;
+    
     // 데미지 필드 시전자
     [NonSerialized] 
     public GameObject Owner;
@@ -74,37 +79,58 @@ public class DamageField : MonoBehaviour
             return;
 
         hitCount++;
-        
+
+        Rigidbody hitRigidbody;
         switch (damageFieldEnum)
         {
-            case DamageFieldEnum.DamageFieldPlayerPunch1:
+            case DamageFieldEnum.DamageFieldPlayerAttack1:
                 // 내가 내 자신을 피격하는것은 잘못된 구조이므로 Owner일 경우 무시
                 if (other.gameObject == Owner)
                     return;
-                
-                Rigidbody hitRigidbody = other.attachedRigidbody;
+                hitRigidbody = other.attachedRigidbody;
                 if (hitRigidbody)
                 {
                     Vector3 direction = other.transform.position - Owner.transform.position;
                     direction.Normalize();
                     
-                    hitRigidbody.AddForce(Owner.transform.forward * 6.0f, ForceMode.Impulse);
+                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
                 }
                 break;
-            case DamageFieldEnum.DamageFieldPlayerPunchL:
+            case DamageFieldEnum.DamageFieldPlayerAttack2:
                 if (other.gameObject == Owner)
                     return;
-                
+                hitRigidbody = other.attachedRigidbody;
+                if (hitRigidbody)
+                {
+                    Vector3 direction = other.transform.position - Owner.transform.position;
+                    direction.Normalize();
+                    
+                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
+                }
                 break;
-            case DamageFieldEnum.DamageFieldPlayerKickR:
+            case DamageFieldEnum.DamageFieldPlayerAttack3:
                 if (other.gameObject == Owner)
                     return;
-                
+                hitRigidbody = other.attachedRigidbody;
+                if (hitRigidbody)
+                {
+                    Vector3 direction = other.transform.position - Owner.transform.position;
+                    direction.Normalize();
+                    
+                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
+                }
                 break;
-            case DamageFieldEnum.DamageFieldPlayerKickL:
+            case DamageFieldEnum.DamageFieldPlayerAttack4:
                 if (other.gameObject == Owner)
                     return;
-                
+                hitRigidbody = other.attachedRigidbody;
+                if (hitRigidbody)
+                {
+                    Vector3 direction = other.transform.position - Owner.transform.position;
+                    direction.Normalize();
+                    
+                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
+                }
                 break;
         }
     }

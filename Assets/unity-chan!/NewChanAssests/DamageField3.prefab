@@ -66,7 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b038ea9502b928e469d042ee153949a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageFieldEnum: 1
+  damageFieldEnum: 3
   damageFieldHitType: 1
   damageFieldDuration: 0
   hitMaxCount: 5
+  knockBackPower: 7
