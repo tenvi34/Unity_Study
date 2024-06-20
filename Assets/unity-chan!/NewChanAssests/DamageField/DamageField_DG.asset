@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b2123855ac0d4e4daf9c8f1a581a91f, type: 3}
+  m_Name: DamageField_DG
+  m_EditorClassIdentifier: 
+  damageFieldDatas_new:
+    _serializedList:
+    - Key: 1
+      Value:
+        damageFieldHitType: 1
+        damageFieldCollisionType: 1
+        BoxSize: {x: 0, y: 0, z: 0}
+        SphereRadius: 1
+        CapsuleRadius: 0
+        CapsuleHeight: 0
+        damageFieldDuration: 0
+        hitMaxCount: 10
+        power: 7
+        damageFieldKnockbackType: 1
+    - Key: 2
+      Value:
+        damageFieldHitType: 1
+        damageFieldCollisionType: 1
+        BoxSize: {x: 0, y: 0, z: 0}
+        SphereRadius: 1
+        CapsuleRadius: 0
+        CapsuleHeight: 0
+        damageFieldDuration: 0
+        hitMaxCount: 1
+        power: 10
+        damageFieldKnockbackType: 1
+    - Key: 3
+      Value:
+        damageFieldHitType: 1
+        damageFieldCollisionType: 1
+        BoxSize: {x: 0, y: 0, z: 0}
+        SphereRadius: 1
+        CapsuleRadius: 0
+        CapsuleHeight: 0
+        damageFieldDuration: 0
+        hitMaxCount: 10
+        power: 5
+        damageFieldKnockbackType: 2
+    - Key: 4
+      Value:
+        damageFieldHitType: 1
+        damageFieldCollisionType: 1
+        BoxSize: {x: 0, y: 0, z: 0}
+        SphereRadius: 1
+        CapsuleRadius: 0
+        CapsuleHeight: 0
+        damageFieldDuration: 0
+        hitMaxCount: 10
+        power: 15
+        damageFieldKnockbackType: 2
+  damageFields:
+    _serializedList:
+    - Key: 1
+      Value: {fileID: 4920349986793173064, guid: 0e18aa8a3dbecba42a0b7a34ccbd42c5,
+        type: 3}
+    - Key: 2
+      Value: {fileID: 4920349986793173064, guid: 371cc2b1515c5914cba35a75d7fec473,
+        type: 3}
+    - Key: 3
+      Value: {fileID: 4920349986793173064, guid: 70218d3511990a04c880256b1d251c2a,
+        type: 3}

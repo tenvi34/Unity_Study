@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public enum DamageFieldEnum
 {
@@ -22,30 +21,26 @@ public enum DamageFieldHitType
 
 public class DamageField : MonoBehaviour
 {
-    // 데미지 필드 이름
     [SerializeField] 
-    private DamageFieldEnum damageFieldEnum;
-    // 히트 타입
-    [SerializeField] 
-    private DamageFieldHitType damageFieldHitType;
-    // 데미지 필드 지속시간
-    [SerializeField] 
-    private float damageFieldDuration;
-    // 데미지 필드 최대 히트 카운트
-    [SerializeField] 
-    private float hitMaxCount;
-
-    [SerializeField] 
-    private float knockBackPower;
+    private DamageFieldDataGroup damageFieldDataGroup;
     
     // 데미지 필드 시전자
     [NonSerialized] 
     public GameObject Owner;
 
+    // 몇명 맞는지
     private float hitCount = 0;
+
+    [NonSerialized] 
+    public DamageFieldEnum DamageFieldEnumValue;
+
+    private DamageFieldData cacheDamageFieldData;
     
     void Start()
     {
+        cacheDamageFieldData = damageFieldDataGroup.GetDamageFieldData(DamageFieldEnumValue);
+        
+        var damageFieldHitType = cacheDamageFieldData.damageFieldHitType;
         if (damageFieldHitType == DamageFieldHitType.Once)
         {
             StartCoroutine(OnceDamageFieldLifeTime());
@@ -64,74 +59,36 @@ public class DamageField : MonoBehaviour
 
     IEnumerator DurationDamageFieldLifeTime()
     {
-        yield return new WaitForSeconds(damageFieldDuration);
+        yield return new WaitForSeconds(cacheDamageFieldData.damageFieldDuration);
         Destroy(gameObject);
-    }
-
-    void Update()
-    {
-        
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (hitCount >= hitMaxCount)
+        if (hitCount >= cacheDamageFieldData.hitMaxCount)
             return;
 
         hitCount++;
 
-        Rigidbody hitRigidbody;
-        switch (damageFieldEnum)
+        DamageFieldData resultData = GetDamageFieldData(DamageFieldEnumValue);
+        DamageFieldRigidbodyEffect(other, resultData.GetPushDirection(Owner, other.gameObject), resultData.power);
+    }
+
+    private DamageFieldData GetDamageFieldData(DamageFieldEnum damageFieldEnum)
+    {
+        return damageFieldDataGroup.GetDamageFieldData(damageFieldEnum);
+    }
+
+    private void DamageFieldRigidbodyEffect(Collider other, Vector3 direction, float power)
+    {
+        // 내가 내 자신을 피격하는것은 잘못된 구조이므로 Owner일 경우 무시
+        if (other.gameObject == Owner)
+            return;
+        
+        Rigidbody hitRigidbody = other.attachedRigidbody;
+        if (hitRigidbody)
         {
-            case DamageFieldEnum.DamageFieldPlayerAttack1:
-                // 내가 내 자신을 피격하는것은 잘못된 구조이므로 Owner일 경우 무시
-                if (other.gameObject == Owner)
-                    return;
-                hitRigidbody = other.attachedRigidbody;
-                if (hitRigidbody)
-                {
-                    Vector3 direction = other.transform.position - Owner.transform.position;
-                    direction.Normalize();
-                    
-                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
-                }
-                break;
-            case DamageFieldEnum.DamageFieldPlayerAttack2:
-                if (other.gameObject == Owner)
-                    return;
-                hitRigidbody = other.attachedRigidbody;
-                if (hitRigidbody)
-                {
-                    Vector3 direction = other.transform.position - Owner.transform.position;
-                    direction.Normalize();
-                    
-                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
-                }
-                break;
-            case DamageFieldEnum.DamageFieldPlayerAttack3:
-                if (other.gameObject == Owner)
-                    return;
-                hitRigidbody = other.attachedRigidbody;
-                if (hitRigidbody)
-                {
-                    Vector3 direction = other.transform.position - Owner.transform.position;
-                    direction.Normalize();
-                    
-                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
-                }
-                break;
-            case DamageFieldEnum.DamageFieldPlayerAttack4:
-                if (other.gameObject == Owner)
-                    return;
-                hitRigidbody = other.attachedRigidbody;
-                if (hitRigidbody)
-                {
-                    Vector3 direction = other.transform.position - Owner.transform.position;
-                    direction.Normalize();
-                    
-                    hitRigidbody.AddForce(Owner.transform.forward * knockBackPower, ForceMode.Impulse);
-                }
-                break;
+            hitRigidbody.AddForce(direction * power, ForceMode.Impulse);
         }
     }
 }
