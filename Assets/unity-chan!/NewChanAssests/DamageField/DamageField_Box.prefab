@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b038ea9502b928e469d042ee153949a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageFieldDataGroup: {fileID: 11400000, guid: bc38f2c93222ba44fa16cbd2348eef74,
+  _damageFieldDataGroup: {fileID: 11400000, guid: bc38f2c93222ba44fa16cbd2348eef74,
     type: 2}
 --- !u!65 &195202911882684706
 BoxCollider:
