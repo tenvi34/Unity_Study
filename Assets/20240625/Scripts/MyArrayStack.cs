@@ -8,6 +8,11 @@ public class MyArrayStack<T>
     private int size;
     private int capacity;
 
+    public MyArrayStack()
+    {
+        SetCapacity(4);
+    }
+
     private void SetCapacity(int capacity_)
     {
         // capacity_가 0보다 작거나 같은 경우 예외처리
@@ -23,7 +28,7 @@ public class MyArrayStack<T>
             // capacity_를 늘리는 경우 value가 존재하는 size 까지만 순회
             // capacity_를 줄이는 경우 뒷자리에 남는 값은 메모리에 반환
             int length_ = -1;
-            if (size < capacity_) { length_ = elements.Length; }
+            if (size < capacity_) { length_ = size; }
             else { length_ = capacity_; }
 
             T[] newElements = new T[capacity_];
@@ -39,7 +44,7 @@ public class MyArrayStack<T>
 
     public void Push(T element_)
     {
-        elements[size-1] = element_;
+        elements[size] = element_;
         size++;
 
         if(capacity <= size + 1)
@@ -75,7 +80,7 @@ public class MyArrayStack<T>
         return size;
     }
 
-    IEnumerable<T> GetElements()
+    public IEnumerable<T> GetElements()
     {
         return elements;
     }
