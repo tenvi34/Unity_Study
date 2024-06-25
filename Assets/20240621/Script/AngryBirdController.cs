@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class AngryBirdController : MonoBehaviour
 {
     // 궤적 그리기
-    public Transform bird;  // 발사할 새 오브젝트
+    [FormerlySerializedAs("bird")] public Transform angryBird;  // 발사할 새 오브젝트
     public Trajectory trajectory;  // 궤적을 그릴 Trajectory 스크립트
     public float launchForceMultiplier = 10f;  // 발사 힘의 크기를 조절하는 변수
     public float panSpeed = 0.5f;  // 카메라 이동 속도
@@ -16,6 +17,8 @@ public class AngryBirdController : MonoBehaviour
     private bool isPanning = false;  // 화면 이동 상태를 확인하는 플래그
     private bool canLaunch = true;  // 발사 가능 여부를 확인하는 플래그
     private Vector3 lastPanPosition;  // 마지막 팬 위치
+
+    public chatgptdrag Chatgptdrag;
     
     void Update()
     {
@@ -46,7 +49,7 @@ public class AngryBirdController : MonoBehaviour
         startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         startPoint.z = 0;  // 2D 게임이므로 z 좌표를 0으로 설정
 
-        if (canLaunch && Vector3.Distance(startPoint, bird.position) < 1f)  // 새 근처에서 드래그 시작
+        if (canLaunch && Vector3.Distance(startPoint, angryBird.position) < 1f)  // 새 근처에서 드래그 시작
         {
             isDragging = true;  // 드래그 상태로 변경
             trajectory.ClearLine();  // 기존 궤적을 초기화
@@ -67,8 +70,8 @@ public class AngryBirdController : MonoBehaviour
         Vector3 currentPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentPoint.z = 0;
 
-        Vector3[] points = CalculateTrajectoryPoints(bird.position, (startPoint - currentPoint) * launchForceMultiplier, 50);
-        trajectory.RenderLine(bird.position, points);  // 궤적을 렌더링
+        Vector3[] points = CalculateTrajectoryPoints(angryBird.position, (startPoint - currentPoint) * launchForceMultiplier, 50);
+        trajectory.RenderLine(angryBird.position, points);  // 궤적을 렌더링
     }
 
     void ReleaseDrag()
@@ -77,7 +80,7 @@ public class AngryBirdController : MonoBehaviour
         Vector3 launchDirection = startPoint - Camera.main.ScreenToWorldPoint(Input.mousePosition);
         launchDirection.z = 0;
 
-        bird.GetComponent<Rigidbody2D>().AddForce(launchDirection * launchForceMultiplier, ForceMode2D.Impulse);
+        angryBird.GetComponent<Rigidbody2D>().AddForce(launchDirection * launchForceMultiplier, ForceMode2D.Impulse);
         trajectory.ClearLine();  // 궤적을 초기화
         canLaunch = false;  // 새를 발사할 수 없도록 설정
         StartCoroutine(ReloadBird());  // 재발사 대기 시간 시작
@@ -109,7 +112,7 @@ public class AngryBirdController : MonoBehaviour
 
     IEnumerator ReloadBird()
     {
-        yield return new WaitForSeconds(reloadTime);  // 재발사 대기 시간
+        yield return new WaitForSeconds(reloadTime);  // 발사 대기 시간
         canLaunch = true;  // 새를 발사할 수 있도록 설정
         Debug.Log("발사 준비 완료!");
     }
